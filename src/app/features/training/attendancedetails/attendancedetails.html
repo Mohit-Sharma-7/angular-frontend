@@ -1,0 +1,86 @@
+<div class="p-8 max-w-5xl mx-auto bg-gray-50 min-h-screen">
+  
+  <button routerLink="/officerdashboard" class="flex items-center text-gray-500 hover:text-gray-700 mb-6 transition-colors text-sm font-medium">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+    Back to Schedule
+  </button>
+
+  <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-6 shadow-sm">
+    <div class="flex items-center gap-4 mb-2">
+      <h1 class="text-3xl font-extrabold text-gray-900">{{ workshop.title }}</h1>
+      <span class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full border border-green-200">
+        {{ workshop.status }}
+      </span>
+    </div>
+    
+    <p class="text-xl text-gray-600 mb-6">{{ workshop.programTitle }}</p>
+
+    <div class="flex flex-wrap gap-8 text-gray-600 font-medium mb-8">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        {{ workshop.date | date:'M/d/yyyy \'at\' hh:mm a' }}
+      </div>
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+        {{ workshop.location }}
+      </div>
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        {{ workshop.enrolledCount }} Enrolled
+      </div>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col items-center justify-center">
+      <span class="text-xs font-bold text-gray-500 tracking-widest uppercase mb-3">Workshop Status</span>
+      <button class="bg-gray-100 text-gray-400 font-semibold px-8 py-2 rounded-lg cursor-not-allowed w-full max-w-2xl border border-gray-200">
+        {{ workshop.status }}
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+    
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-1">Attendance Manager</h2>
+        <p class="text-gray-500">Mark farmers who are present at this workshop.</p>
+      </div>
+      
+      <button (click)="submitBulkAttendance()" class="bg-[#10a34e] hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition-colors shadow-sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+        Submit Attendance
+      </button>
+    </div>
+
+    <table class="w-full text-left border-collapse">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th class="px-6 py-4 w-16">
+            <input type="checkbox" (change)="toggleAll($event)" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer">
+          </th>
+          <th class="px-6 py-4 text-sm font-bold text-gray-600">Farmer Name</th>
+          <th class="px-6 py-4 text-sm font-bold text-gray-600">Village</th>
+          <th class="px-6 py-4 text-sm font-bold text-gray-600">Phone</th>
+          <th class="px-6 py-4 text-sm font-bold text-gray-600">Current Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        @for (farmer of farmers; track farmer.farmerId) {
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4">
+              <input type="checkbox" [(ngModel)]="farmer.isPresent" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer">
+            </td>
+            <td class="px-6 py-4 font-bold text-gray-900">{{ farmer.name }}</td>
+            <td class="px-6 py-4 text-gray-600 font-medium">{{ farmer.village }}</td>
+            <td class="px-6 py-4 text-gray-600">{{ farmer.phone }}</td>
+            <td class="px-6 py-4">
+              <span class="text-sm font-medium" [ngClass]="farmer.isPresent ? 'text-green-600' : 'text-gray-500'">
+                {{ farmer.isPresent ? 'Present' : 'Pending' }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

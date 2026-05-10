@@ -1,0 +1,49 @@
+<div class="p-8 max-w-7xl mx-auto">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Program Dashboard</h1>
+      <p class="text-gray-500 mt-1">Manage agricultural training programs and logistics.</p>
+    </div>
+    <button (click)="openCreateModal()" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-colors shadow-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+      Create Program
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (program of programs; track program.programId) {
+      
+      <div (click)="viewDetails(program.programId)" class="cursor-pointer bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col h-full overflow-hidden">
+        
+        <div class="p-6 flex-grow">
+          <div class="flex justify-between items-start mb-4">
+            <span [ngClass]="{
+              'bg-green-100 text-green-800': program.status === 'Active',
+              'bg-gray-100 text-gray-800': program.status === 'Draft',
+              'bg-emerald-100 text-emerald-800': program.status === 'Completed'
+            }" class="text-xs font-semibold px-3 py-1 rounded-full">
+              {{ program.status }}
+            </span>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">{{ program.title }}</h3>
+          <p class="text-gray-600 text-sm line-clamp-2">{{ program.description }}</p>
+        </div>
+        <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center text-sm text-gray-500 gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          {{ program.startDate | date:'M/d/yyyy' }} &nbsp;-&nbsp; {{ program.endDate | date:'M/d/yyyy' }}
+        </div>
+      </div>
+    } @empty {
+      <div class="col-span-full text-center py-12 text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+        No training programs found. Click "Create Program" to start.
+      </div>
+    }
+  </div>
+
+  @if (isModalOpen) {
+    <app-create-program-modal 
+      (close)="closeModal()" 
+      (save)="handleSaveProgram($event)">
+    </app-create-program-modal>
+  }
+</div>
